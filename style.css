@@ -1,0 +1,159 @@
+/* --- CONFIGURACIÓN GLOBAL --- */
+body {
+    margin: 0;
+    padding: 0;
+    transition: background 1.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s ease;
+    background-attachment: fixed;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    color: white;
+    overflow-x: hidden; /* Evita rebotes laterales molestos */
+}
+
+/* --- TEMAS DINÁMICOS DE FONDO --- */
+.bg-main, .theme-default {
+    background: radial-gradient(circle at top right, #1e293b, #0f172a);
+}
+
+.theme-hot {
+    background: radial-gradient(circle at top right, #f97316, #7c2d12);
+}
+
+.theme-warm {
+    background: radial-gradient(circle at top right, #fbbf24, #92400e);
+}
+
+.theme-cold {
+    background: radial-gradient(circle at top right, #3b82f6, #1e3a8a);
+}
+
+.theme-frozen {
+    background: radial-gradient(circle at top right, #93c5fd, #1e40af);
+}
+
+.night-mode {
+    background: radial-gradient(circle at top right, #020617, #0f172a) !important;
+}
+
+.night-mode .glass-card {
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* --- EFECTOS DE CRISTAL (GLASSMORPHISM) --- */
+.glass-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.glass-widget {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.glass-widget:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-5px);
+}
+
+/* --- ELIMINAR BARRA VISUAL PERO MANTENER EL SLIDE --- */
+/* Aplicamos esto a los contenedores que necesitan scroll horizontal */
+#hourly-forecast, #day-selector, #fav-dashboard, .overflow-x-auto {
+    display: flex;             
+    overflow-x: auto !important; /* Permite el movimiento */
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch; /* Suavidad en móviles */
+    scrollbar-width: none !important;  /* Firefox */
+    -ms-overflow-style: none !important; /* IE y Edge */
+}
+
+/* Ocultar barra en Chrome, Safari y nuevas versiones de Edge */
+#hourly-forecast::-webkit-scrollbar, 
+#day-selector::-webkit-scrollbar, 
+#fav-dashboard::-webkit-scrollbar,
+.overflow-x-auto::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+/* --- ESTILOS DE PRONÓSTICO Y TEXTOS --- */
+/* Forzamos el blanco puro para que se noten mucho los datos */
+#hourly-forecast .text-white, 
+.hour-temp {
+    color: #ffffff !important;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    font-weight: 900;
+}
+
+/* Estilo para las horas (arriba de los iconos) */
+.hour-time {
+    color: rgba(255, 255, 255, 0.7) !important;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+}
+
+/* --- MAPA --- */
+#map { 
+    z-index: 10; 
+    filter: saturate(1.2) brightness(0.8) contrast(1.1);
+    background: #0f172a !important;
+    border-radius: 2.5rem;
+}
+
+.leaflet-container {
+    background: #0f172a !important;
+}
+
+/* --- ANIMACIONES --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+.animate-fade-in { animation: fadeIn 0.8s ease-out forwards; }
+.animate-slide-up { animation: slideUp 0.8s ease-out 0.2s forwards; }
+.animate-pulse { animation: pulse 1.5s ease-in-out infinite; display: inline-block; }
+
+/* --- MODO COMPARACIÓN --- */
+.comparison-active {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    max-width: 95% !important;
+    gap: 2rem;
+}
+
+@media (max-width: 1024px) {
+    .comparison-active {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* --- FAVORITOS Y ESTRELLA --- */
+/* Resplandor amarillo para la estrella activa */
+.text-yellow-400 {
+    color: #fbbf24 !important;
+    filter: drop-shadow(0 0 12px rgba(251, 191, 36, 0.8));
+    transition: all 0.3s ease;
+}
+
+/* Tarjetas de favoritos individuales */
+#fav-dashboard > div {
+    flex-shrink: 0; /* Evita que las tarjetas se aplasten */
+    min-width: 130px;
+}
