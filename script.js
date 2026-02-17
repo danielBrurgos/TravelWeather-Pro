@@ -79,7 +79,6 @@ function renderColumn(current, forecast, column) {
     mainContent.classList.remove('hidden');
     if (column === 1) applyDynamicTheme(current.main.temp, current.sys.sunrise, current.sys.sunset);
 
-    // Lógica de color de estrella dinámica
     const favs = JSON.parse(localStorage.getItem('favs')) || [];
     const isFav = favs.includes(current.name);
     const starColorClass = isFav ? 'text-yellow-400' : 'text-white/40';
@@ -93,7 +92,6 @@ function renderColumn(current, forecast, column) {
             <button onclick="toggleFavorite('${current.name}', this)" class="absolute top-6 right-8 ${starColorClass} transition-all transform hover:scale-125">
                 <i class="fas fa-star text-2xl"></i>
             </button>
-
             <h2 class="text-3xl font-bold mb-2 uppercase tracking-tighter">${current.name}</h2>
             <img src="https://openweathermap.org/img/wn/${current.weather[0].icon}@4x.png" class="mx-auto w-32 drop-shadow-2xl">
             <p class="text-7xl font-black mb-2 tracking-tighter">${Math.round(current.main.temp)}°</p>
@@ -126,8 +124,10 @@ function renderColumn(current, forecast, column) {
     if (column === 1) {
         initMap(current.coord.lat, current.coord.lon);
         renderExtendedForecast(forecast);
+        // Actualización de recomendaciones de innovación
         getAirQuality(current.coord.lat, current.coord.lon);
         updateFoodRecs(current.main.temp, current.weather[0].description);
+        updateClothingRecs(current.main.temp, current.weather[0].description);
     }
 
     if (isComparisonMode) {
@@ -137,56 +137,15 @@ function renderColumn(current, forecast, column) {
     }
 }
 
-// 6. Lógica de Favoritos (Toggled)
-function toggleFavorite(cityName, btnElement) {
-    let favs = JSON.parse(localStorage.getItem('favs')) || [];
-    const index = favs.indexOf(cityName);
-
-    if (index === -1) {
-        // AGREGAR
-        favs.push(cityName);
-        if (favs.length > 3) favs.shift(); 
-        btnElement.classList.replace('text-white/40', 'text-yellow-400');
-    } else {
-        // QUITAR
-        favs.splice(index, 1);
-        btnElement.classList.replace('text-yellow-400', 'text-white/40');
-    }
-
-    localStorage.setItem('favs', JSON.stringify(favs));
-    updateFavDashboard();
-}
-
-async function updateFavDashboard() {
-    const favDashboard = document.getElementById('fav-dashboard');
-    if (!favDashboard) return;
-    const favs = JSON.parse(localStorage.getItem('favs')) || [];
-    favDashboard.innerHTML = '';
-
-    for (const city of favs) {
-        try {
-            const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric&lang=es`);
-            const d = await res.json();
-            favDashboard.innerHTML += `
-                <div class="glass-card p-4 rounded-3xl text-center cursor-pointer hover:bg-white/10 transition-all min-w-[120px]" onclick="getWeatherData('${city}', 1)">
-                    <p class="text-[9px] font-black uppercase opacity-60 mb-1">${city}</p>
-                    <p class="text-xl font-black text-white">${Math.round(d.main.temp)}°</p>
-                    <img src="https://openweathermap.org/img/wn/${d.weather[0].icon}.png" class="w-8 mx-auto">
-                </div>
-            `;
-        } catch (e) { console.error(e); }
-    }
-}
-
-// 5. Gastronomía
+// 5. Innovación: Recomendaciones Gastronómicas
 function updateFoodRecs(temp, desc) {
     const foodList = document.getElementById('food-list-1');
     if (!foodList) return;
     let items = [];
     if (temp > 35) {
-        items = [{ t: 'Ceviche o Aguachile', i: 'fa-fish-fins' }, { t: 'Raspados de la Unison', i: 'fa-ice-cream' }, { t: 'Cerveza fría', i: 'fa-beer-mug-empty' }];
+        items = [{ t: 'Ceviche o Aguachile', i: 'fa-fish-fins' }, { t: 'Raspados de la Unison', i: 'fa-ice-cream' }];
     } else if (temp < 18 || desc.includes('lluvia')) {
-        items = [{ t: 'Caldo de Queso', i: 'fa-bowl-food' }, { t: 'Café y Coyotas', i: 'fa-mug-hot' }, { t: 'Pan Dulce', i: 'fa-bread-slice' }];
+        items = [{ t: 'Caldo de Queso', i: 'fa-bowl-food' }, { t: 'Café y Coyotas', i: 'fa-mug-hot' }];
     } else {
         items = [{ t: 'Tacos de Asada', i: 'fa-fire-burner' }, { t: 'Dogos sonorenses', i: 'fa-hotdog' }];
     }
@@ -198,7 +157,43 @@ function updateFoodRecs(temp, desc) {
     `).join('');
 }
 
-// 7. Calidad del Aire
+// 6. Innovación: Ropa Recomendada
+function updateClothingRecs(temp, desc) {
+    const clothingList = document.getElementById('clothing-list-1');
+    if (!clothingList) return;
+
+    let items = [];
+    if (temp > 30) {
+        items = [
+            { t: 'Ropa ligera y fresca', i: 'fa-shirt' },
+            { t: 'Lentes y protector solar', i: 'fa-sun' }
+        ];
+    } else if (temp > 18) {
+        items = [
+            { t: 'Pantalones y camisa ligera', i: 'fa-user-tie' },
+            { t: 'Suéter por la tarde', i: 'fa-vest' }
+        ];
+    } else {
+        items = [
+            { t: 'Chamarra abrigadora', i: 'fa-mitten' },
+            { t: 'Pantalón grueso', i: 'fa-socks' }
+        ];
+    }
+
+    if (desc.includes('lluvia')) {
+        items.push({ t: 'Paraguas o Impermeable', i: 'fa-umbrella' });
+    }
+
+    // MAPEO CORREGIDO: Accedemos a item.t para el texto
+    clothingList.innerHTML = items.map(item => `
+        <div class="flex items-center gap-4 bg-white/5 p-4 rounded-2xl border border-white/5 shadow-sm">
+            <i class="fas ${item.i} text-indigo-400 text-lg"></i>
+            <span class="font-bold text-xs uppercase text-white">${item.t}</span>
+        </div>
+    `).join('');
+}
+
+// 7. Calidad del Aire (AQI)
 async function getAirQuality(lat, lon) {
     try {
         const res = await fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`);
@@ -217,12 +212,46 @@ async function getAirQuality(lat, lon) {
             statusEl.textContent = levels[aqi].t;
             statusEl.className = `font-bold text-lg ${levels[aqi].c}`;
             valEl.textContent = aqi;
-            valEl.className = `w-16 h-16 rounded-full border-4 flex items-center justify-center font-black ${levels[aqi].b} ${levels[aqi].c}`;
+            valEl.className = `w-14 h-14 rounded-full border-4 flex items-center justify-center font-black ${levels[aqi].b} ${levels[aqi].c}`;
         }
     } catch (e) { console.error(e); }
 }
 
-// Mapas y Pronóstico
+// 8. Favoritos y Mapas (Lógica sin cambios)
+function toggleFavorite(cityName, btnElement) {
+    let favs = JSON.parse(localStorage.getItem('favs')) || [];
+    const index = favs.indexOf(cityName);
+    if (index === -1) {
+        favs.push(cityName);
+        if (favs.length > 3) favs.shift(); 
+        btnElement.classList.replace('text-white/40', 'text-yellow-400');
+    } else {
+        favs.splice(index, 1);
+        btnElement.classList.replace('text-yellow-400', 'text-white/40');
+    }
+    localStorage.setItem('favs', JSON.stringify(favs));
+    updateFavDashboard();
+}
+
+async function updateFavDashboard() {
+    const favDashboard = document.getElementById('fav-dashboard');
+    if (!favDashboard) return;
+    const favs = JSON.parse(localStorage.getItem('favs')) || [];
+    favDashboard.innerHTML = '';
+    for (const city of favs) {
+        try {
+            const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric&lang=es`);
+            const d = await res.json();
+            favDashboard.innerHTML += `
+                <div class="glass-card p-4 rounded-3xl text-center cursor-pointer hover:bg-white/10 transition-all min-w-[120px]" onclick="getWeatherData('${city}', 1)">
+                    <p class="text-[9px] font-black uppercase opacity-60 mb-1">${city}</p>
+                    <p class="text-xl font-black text-white">${Math.round(d.main.temp)}°</p>
+                    <img src="https://openweathermap.org/img/wn/${d.weather[0].icon}.png" class="w-8 mx-auto">
+                </div>`;
+        } catch (e) { console.error(e); }
+    }
+}
+
 function initMap(lat, lon) {
     if (map) { map.remove(); map = null; }
     const mapElement = document.getElementById('map');
