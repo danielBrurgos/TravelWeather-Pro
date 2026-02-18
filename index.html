@@ -22,11 +22,14 @@
             <div class="relative w-full md:w-96">
                 <div class="flex bg-white/10 backdrop-blur-md rounded-2xl p-1 border border-white/20 shadow-2xl">
                     <input type="text" id="city-input" placeholder="Busca tu destino..." 
-                        class="w-full bg-transparent p-4 outline-none text-white placeholder-white/60">
+                        class="w-full bg-transparent p-4 outline-none text-white placeholder-white/60" autocomplete="off">
                     <button id="search-btn" class="bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold px-6 rounded-xl transition-all">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
+                
+                <div id="autocomplete-results" class="absolute w-full mt-2 bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl z-50 hidden overflow-hidden">
+                    </div>
             </div>
 
             <button id="compare-mode-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-xl">
@@ -34,11 +37,10 @@
             </button>
         </header>
 
-<main id="main-content" class="hidden transition-all duration-500">
+        <main id="main-content" class="hidden transition-all duration-500">
             <div class="grid grid-cols-1 gap-8" id="weather-grid">
                 <div id="column-1" class="space-y-6"></div>
-                <div id="column-2" class="hidden space-y-6 border-l border-white/10 pl-0 md:pl-8">
-                    </div>
+                <div id="column-2" class="hidden space-y-6 border-l border-white/10 pl-0 md:pl-8"></div>
             </div>
 
             <section class="mt-12">
@@ -66,7 +68,7 @@
         </main> 
     </div>
 
-<footer class="mt-20 py-10 border-t border-white/10 text-center">
+    <footer class="mt-20 py-10 border-t border-white/10 text-center">
         <div class="flex justify-center gap-8 mb-6">
             <a href="https://github.com/danielBrurgos" target="_blank" class="text-white/40 hover:text-white transition-all transform hover:scale-125">
                 <i class="fab fa-github text-2xl"></i>
