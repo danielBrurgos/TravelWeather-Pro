@@ -20,3 +20,4 @@ Tecnologías
 Enlaces
 Sitio en vivo: https://danielbrurgos.github.io/TravelWeather-Pro/
 Repositorio: https://github.com/danielBrurgos/TravelWeather-Pro.git
+<img width="1298" height="634" alt="image" src="https://github.com/user-attachments/assets/0187c3b5-8fb8-4dac-ad6e-597047f26d28" />
